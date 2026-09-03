@@ -1,13 +1,14 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import type { ReactNode } from "react";
+import { useQueryClient, type QueryKey } from "@tanstack/react-query";
 import type { ActionResult } from "@/lib/actions/helpers";
 import { Notice } from "@/components/ui";
 
 type Action = (prev: ActionResult | null, fd: FormData) => Promise<ActionResult>;
 
-/** Form com server action, mostra erro/sucesso e reseta ao salvar. */
+/** Form com server action; invalida as queries do TanStack informadas em `invalidate` após sucesso. */
 export function ActionForm({
   action,
   children,
@@ -15,6 +16,8 @@ export function ActionForm({
   className = "",
   resetOnSuccess = true,
   confirmText,
+  invalidate,
+  onSuccess,
 }: {
   action: Action;
   children: ReactNode;
@@ -22,8 +25,21 @@ export function ActionForm({
   className?: string;
   resetOnSuccess?: boolean;
   confirmText?: string;
+  invalidate?: QueryKey[];
+  onSuccess?: () => void;
 }) {
   const [state, formAction, pending] = useActionState(action, null);
+  const queryClient = useQueryClient();
+  const lastHandled = useRef<ActionResult | null>(null);
+
+  useEffect(() => {
+    if (state && state.ok && state !== lastHandled.current) {
+      lastHandled.current = state;
+      invalidate?.forEach((key) => queryClient.invalidateQueries({ queryKey: key }));
+      onSuccess?.();
+    }
+  }, [state, invalidate, onSuccess, queryClient]);
+
   return (
     <form
       action={formAction}
@@ -53,14 +69,26 @@ export function InlineAction({
   confirmText,
   hidden,
   danger,
+  invalidate,
 }: {
   action: Action;
   label: string;
   confirmText?: string;
   hidden?: Record<string, string>;
   danger?: boolean;
+  invalidate?: QueryKey[];
 }) {
   const [state, formAction, pending] = useActionState(action, null);
+  const queryClient = useQueryClient();
+  const lastHandled = useRef<ActionResult | null>(null);
+
+  useEffect(() => {
+    if (state && state.ok && state !== lastHandled.current) {
+      lastHandled.current = state;
+      invalidate?.forEach((key) => queryClient.invalidateQueries({ queryKey: key }));
+    }
+  }, [state, invalidate, queryClient]);
+
   return (
     <form
       action={formAction}

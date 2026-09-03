@@ -1,10 +1,10 @@
-import type { LinhaCarga } from "@/lib/carga";
+import type { LinhaCargaDTO } from "@/lib/queries";
 import { fmt } from "@/lib/calc";
 import { Tag } from "@/components/ui";
 
 const DIAS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
 
-export function Gantt({ linhas, semana }: { linhas: LinhaCarga[]; semana: Date }) {
+export function Gantt({ linhas, semana }: { linhas: LinhaCargaDTO[]; semana: Date }) {
   return (
     <div className="overflow-x-auto">
       <div className="min-w-[920px]">

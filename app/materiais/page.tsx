@@ -1,24 +1,25 @@
-import { prisma } from "@/lib/prisma";
+"use client";
+
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { excluirMaterial, salvarMaterial } from "@/lib/actions/moldes";
 import { ActionForm, InlineAction } from "@/components/ActionForm";
 import { Empty, Field, FormGrid, PageHeader, Panel, Tag } from "@/components/ui";
-import Link from "next/link";
+import { api, qk } from "@/lib/queries";
 
 const TIPO = { RESINA_VIRGEM: "Resina virgem", RECICLO: "Reciclo", MASTERBATCH: "Corante / masterbatch", OUTRO: "Outro" } as const;
 
-export default async function MateriaisPage({ searchParams }: { searchParams: Promise<{ edit?: string }> }) {
-  const { edit } = await searchParams;
-  const [materiais, editando] = await Promise.all([
-    prisma.material.findMany({ orderBy: { nome: "asc" }, include: { _count: { select: { composicoes: true } } } }),
-    edit ? prisma.material.findUnique({ where: { id: edit } }) : null,
-  ]);
+export default function MateriaisPage() {
+  const [editId, setEditId] = useState<string | null>(null);
+  const { data: materiais, isLoading } = useQuery({ queryKey: qk.materiais, queryFn: api.materiais });
+  const editando = materiais?.find((m) => m.id === editId) ?? null;
 
   return (
     <>
       <PageHeader title="Matéria-prima" sub="Estoque mantido manualmente neste sistema (decisão do MVP). Deixe o estoque em branco para 'não verificado' — nunca é tratado como zero." />
 
       <Panel title={editando ? `Editar ${editando.nome}` : "Novo material"}>
-        <ActionForm key={editando?.id ?? "new"} action={salvarMaterial} submitLabel={editando ? "Salvar alterações" : "Salvar material"} resetOnSuccess={!editando}>
+        <ActionForm key={editando?.id ?? "new"} action={salvarMaterial} submitLabel={editando ? "Salvar alterações" : "Salvar material"} resetOnSuccess={!editando} invalidate={[qk.materiais]} onSuccess={() => setEditId(null)}>
           {editando && <input type="hidden" name="id" value={editando.id} />}
           <FormGrid cols={3}>
             <Field label="Nome"><input className="input" name="nome" defaultValue={editando?.nome} placeholder="PP Homopolímero H103" required /></Field>
@@ -27,14 +28,16 @@ export default async function MateriaisPage({ searchParams }: { searchParams: Pr
                 {Object.entries(TIPO).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
               </select>
             </Field>
-            <Field label="Estoque disponível (kg)" hint="em branco = não verificado"><input className="input" name="estoqueDisponivelKg" type="number" min={0} step="0.1" defaultValue={editando?.estoqueDisponivelKg == null ? "" : Number(editando.estoqueDisponivelKg)} /></Field>
+            <Field label="Estoque disponível (kg)" hint="em branco = não verificado"><input className="input" name="estoqueDisponivelKg" type="number" min={0} step="0.1" defaultValue={editando?.estoqueDisponivelKg == null ? "" : editando.estoqueDisponivelKg} /></Field>
           </FormGrid>
-          {editando && <Link href="/materiais" className="btn mt-4 mr-2 inline-flex">Cancelar</Link>}
+          {editando && <button type="button" className="btn mt-4 mr-2" onClick={() => setEditId(null)}>Cancelar</button>}
         </ActionForm>
       </Panel>
 
       <Panel title="Materiais" className="mt-5">
-        {materiais.length === 0 ? (
+        {isLoading ? (
+          <div className="text-[13px] text-muted py-6 text-center">Carregando…</div>
+        ) : !materiais || materiais.length === 0 ? (
           <Empty>Nenhum material ainda.</Empty>
         ) : (
           <table className="tbl">
@@ -43,12 +46,12 @@ export default async function MateriaisPage({ searchParams }: { searchParams: Pr
               {materiais.map((m) => (
                 <tr key={m.id}>
                   <td className="font-semibold">{m.nome}</td>
-                  <td>{TIPO[m.tipo]}</td>
-                  <td>{m.estoqueDisponivelKg == null ? <Tag kind="neutral">não verificado</Tag> : <Tag kind={Number(m.estoqueDisponivelKg) > 0 ? "ok" : "bad"}>{Number(m.estoqueDisponivelKg).toLocaleString("pt-BR")} kg</Tag>}</td>
-                  <td>{m._count.composicoes}</td>
+                  <td>{TIPO[m.tipo as keyof typeof TIPO]}</td>
+                  <td>{m.estoqueDisponivelKg == null ? <Tag kind="neutral">não verificado</Tag> : <Tag kind={m.estoqueDisponivelKg > 0 ? "ok" : "bad"}>{m.estoqueDisponivelKg.toLocaleString("pt-BR")} kg</Tag>}</td>
+                  <td>{m.composicoesCount}</td>
                   <td className="whitespace-nowrap">
-                    <Link href={`/materiais?edit=${m.id}`} className="btn !py-1 !px-2 !text-[12px] mr-1">Editar</Link>
-                    <InlineAction action={excluirMaterial} label="Excluir" danger hidden={{ id: m.id }} confirmText={`Excluir ${m.nome}?`} />
+                    <button className="btn !py-1 !px-2 !text-[12px] mr-1" onClick={() => setEditId(m.id)}>Editar</button>
+                    <InlineAction action={excluirMaterial} label="Excluir" danger hidden={{ id: m.id }} confirmText={`Excluir ${m.nome}?`} invalidate={[qk.materiais]} />
                   </td>
                 </tr>
               ))}
