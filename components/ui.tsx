@@ -72,7 +72,7 @@ export function KpiCard({
 export function PageHeader({ title, sub }: { title: string; sub: string }) {
   return (
     <header className="mb-5">
-      <h1 className="text-xl font-semibold m-0 mb-1">{title}</h1>
+      <h1 className="text-xl font-semibold tracking-tight m-0 mb-1">{title}</h1>
       <p className="text-[13px] text-muted m-0">{sub}</p>
     </header>
   );
