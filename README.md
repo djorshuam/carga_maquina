@@ -28,7 +28,7 @@ npm run dev
 ### Vercel (+ Supabase/Neon)
 1. Importe o repositório na Vercel.
 2. Env vars: `DATABASE_URL` (pooler, porta 6543 no Supabase, com `?pgbouncer=true`) e `DIRECT_URL` (porta 5432).
-3. O build roda `prisma generate && prisma migrate deploy && next build` automaticamente.
+3. Migrations: rode `npm run db:migrate` apontando para o banco (o build na Vercel não toca o banco).
 
 ### Self-hosted (Docker)
 ```bash
