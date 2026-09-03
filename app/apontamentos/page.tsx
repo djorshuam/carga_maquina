@@ -4,8 +4,6 @@ import { ActionForm } from "@/components/ActionForm";
 import { Empty, Field, FormGrid, PageHeader, Panel, Tag } from "@/components/ui";
 import { fmt } from "@/lib/calc";
 
-export const dynamic = "force-dynamic";
-
 const MOTIVOS = {
   SETUP: "Setup / troca de molde",
   FALTA_MATERIAL: "Falta de material",

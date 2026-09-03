@@ -5,8 +5,6 @@ import { Empty, KpiCard, PageHeader, Panel, Tag } from "@/components/ui";
 import { fmt, zonaOee } from "@/lib/calc";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
-
 function isoDay(d: Date) {
   return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())).toISOString().slice(0, 10);
 }

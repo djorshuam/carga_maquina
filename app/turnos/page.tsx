@@ -6,8 +6,6 @@ import { capacidadeSemanalHoras, fmt, horasDiaTurnos } from "@/lib/calc";
 import { turnosDe } from "@/lib/carga";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
-
 export default async function TurnosPage({ searchParams }: { searchParams: Promise<{ maquina?: string }> }) {
   const { maquina: maquinaId } = await searchParams;
   const maquinas = await prisma.maquina.findMany({ orderBy: { codigo: "asc" }, include: { paradas: { orderBy: { inicio: "asc" } } } });

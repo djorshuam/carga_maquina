@@ -4,8 +4,6 @@ import { ActionForm, InlineAction } from "@/components/ActionForm";
 import { Empty, Field, FormGrid, PageHeader, Panel, Tag } from "@/components/ui";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
-
 const STATUS_TAG = { ATIVA: ["ok", "Ativa"], MANUTENCAO: ["warn", "Em manutenção"], INATIVA: ["neutral", "Inativa"] } as const;
 
 export default async function MaquinasPage({ searchParams }: { searchParams: Promise<{ edit?: string }> }) {

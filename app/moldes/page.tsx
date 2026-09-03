@@ -6,8 +6,6 @@ import { PecasHoraPreview } from "@/components/PecasHoraPreview";
 import { pecasPorHora, fmt } from "@/lib/calc";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
-
 export default async function MoldesPage({ searchParams }: { searchParams: Promise<{ edit?: string }> }) {
   const { edit } = await searchParams;
   const [moldes, maquinas, editando] = await Promise.all([

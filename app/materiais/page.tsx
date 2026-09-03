@@ -4,8 +4,6 @@ import { ActionForm, InlineAction } from "@/components/ActionForm";
 import { Empty, Field, FormGrid, PageHeader, Panel, Tag } from "@/components/ui";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
-
 const TIPO = { RESINA_VIRGEM: "Resina virgem", RECICLO: "Reciclo", MASTERBATCH: "Corante / masterbatch", OUTRO: "Outro" } as const;
 
 export default async function MateriaisPage({ searchParams }: { searchParams: Promise<{ edit?: string }> }) {

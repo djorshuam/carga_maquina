@@ -4,8 +4,6 @@ import { KpiCard, PageHeader, Panel, Tag, Empty } from "@/components/ui";
 import { fmt } from "@/lib/calc";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
-
 export default async function Home({ searchParams }: { searchParams: Promise<{ semana?: string }> }) {
   const sp = await searchParams;
   const base = sp.semana ? new Date(sp.semana + "T00:00:00Z") : new Date();

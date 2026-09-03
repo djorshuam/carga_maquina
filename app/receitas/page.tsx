@@ -4,8 +4,6 @@ import { ActionForm } from "@/components/ActionForm";
 import { Empty, Field, FormGrid, PageHeader, Panel, Tag } from "@/components/ui";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
-
 const LINHAS = 5;
 
 export default async function ReceitasPage({ searchParams }: { searchParams: Promise<{ molde?: string }> }) {

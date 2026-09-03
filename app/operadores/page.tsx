@@ -3,8 +3,6 @@ import { salvarDisponibilidade, salvarOperadores } from "@/lib/actions/maquinas"
 import { ActionForm } from "@/components/ActionForm";
 import { Empty, Field, FormGrid, PageHeader, Panel, Tag } from "@/components/ui";
 
-export const dynamic = "force-dynamic";
-
 export default async function OperadoresPage({ searchParams }: { searchParams: Promise<{ data?: string }> }) {
   const sp = await searchParams;
   const hoje = new Date();

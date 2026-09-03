@@ -7,8 +7,6 @@ import { cargaSemanal } from "@/lib/carga";
 import { HorasPreview } from "@/components/HorasPreview";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
-
 const PRIO = { NORMAL: ["neutral", "Normal"], ALTA: ["warn", "Alta"], URGENTE: ["bad", "Urgente"] } as const;
 
 export default async function PedidosPage({ searchParams }: { searchParams: Promise<{ edit?: string; ver?: string }> }) {
