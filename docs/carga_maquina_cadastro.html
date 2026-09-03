@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Cadastro — Carga Máquina</title>
+<style>
+  :root{
+    --bg:#f4f6f8;
+    --panel:#ffffff;
+    --border:#e1e5ea;
+    --text:#1c2530;
+    --muted:#68737f;
+    --blue:#2f6fed;
+    --blue-bg:#eaf0fe;
+    --green:#2e9e5b;
+    --red:#d0402a;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    color:var(--text);
+    padding:24px;
+  }
+  h1{font-size:20px;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 22px;}
+
+  .tabs{
+    display:flex;
+    gap:4px;
+    border-bottom:1px solid var(--border);
+    margin-bottom:20px;
+  }
+  .tab{
+    padding:9px 16px;
+    font-size:13px;
+    font-weight:600;
+    color:var(--muted);
+    border-bottom:2px solid transparent;
+    cursor:default;
+  }
+  .tab.active{
+    color:var(--blue);
+    border-bottom:2px solid var(--blue);
+  }
+
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:20px 22px;
+    margin-bottom:20px;
+  }
+  .panel h2{
+    font-size:15px;
+    margin:0 0 4px;
+  }
+  .panel .desc{
+    font-size:12.5px;
+    color:var(--muted);
+    margin:0 0 18px;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px 16px;
+  }
+  .grid.wide{grid-template-columns:repeat(4,1fr);}
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+  }
+  .field.span2{grid-column:span 2;}
+  .field label{
+    font-size:11.5px;
+    font-weight:600;
+    color:var(--muted);
+  }
+  .field input, .field select{
+    border:1px solid var(--border);
+    border-radius:7px;
+    padding:8px 10px;
+    font-size:13px;
+    color:var(--text);
+    background:#fbfbfc;
+  }
+  .field .hint{
+    font-size:10.5px;
+    color:#9aa4ae;
+  }
+
+  .btn-row{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:18px;
+  }
+  .btn{
+    padding:9px 18px;
+    border-radius:7px;
+    font-size:13px;
+    font-weight:600;
+    border:1px solid var(--border);
+    background:#fff;
+    color:var(--text);
+    cursor:default;
+  }
+  .btn.primary{
+    background:var(--blue);
+    border-color:var(--blue);
+    color:#fff;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:12.5px;
+    margin-top:6px;
+  }
+  th{
+    text-align:left;
+    font-size:11px;
+    color:var(--muted);
+    padding:6px 8px;
+    border-bottom:1px solid var(--border);
+  }
+  td{
+    padding:8px 8px;
+    border-bottom:1px solid #eef1f4;
+  }
+  tr:last-child td{border-bottom:none;}
+  .tag{
+    display:inline-block;
+    padding:2px 8px;
+    border-radius:8px;
+    font-size:10.5px;
+    font-weight:600;
+  }
+  .tag.ok{background:#e6f6ec;color:var(--green);}
+  .tag.warn{background:#fff4dc;color:#c98a06;}
+  .tag.compat{background:var(--blue-bg);color:var(--blue);}
+
+  .add-link{
+    font-size:12px;
+    color:var(--blue);
+    font-weight:600;
+    cursor:default;
+  }
+
+  .section-title{
+    font-size:12px;
+    font-weight:700;
+    color:var(--text);
+    margin:20px 0 10px;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+  }
+</style>
+</head>
+<body>
+
+<h1>Cadastro de Dados — Carga Máquina</h1>
+<p class="sub">Injeção de Plástico · Base para o cálculo de capacidade e ocupação das injetoras</p>
+
+<div class="tabs">
+  <div class="tab active">Máquinas</div>
+  <div class="tab">Moldes / Tempo de Ciclo</div>
+  <div class="tab">Turnos e Calendário</div>
+  <div class="tab">Demanda (Pedidos)</div>
+</div>
+
+<!-- 1. CADASTRO DE MÁQUINA -->
+<div class="panel">
+  <h2>Nova Máquina</h2>
+  <p class="desc">Dados fixos da injetora — usados para saber quais moldes ela aceita e sua capacidade máxima.</p>
+  <div class="grid wide">
+    <div class="field">
+      <label>Código da máquina</label>
+      <input value="INJ-07">
+    </div>
+    <div class="field">
+      <label>Tonelagem</label>
+      <input value="150" placeholder="ex: 150t">
+      <span class="hint">toneladas de fechamento</span>
+    </div>
+    <div class="field">
+      <label>Fabricante / Modelo</label>
+      <input value="Romi 150R">
+    </div>
+    <div class="field">
+      <label>Status</label>
+      <select><option>Ativa</option><option>Em manutenção</option><option>Inativa</option></select>
+    </div>
+    <div class="field">
+      <label>Dimensão do prato (mm)</label>
+      <input value="450 x 450">
+    </div>
+    <div class="field">
+      <label>Curso de abertura (mm)</label>
+      <input value="380">
+    </div>
+    <div class="field">
+      <label>Capacidade de injeção (g)</label>
+      <input value="320">
+    </div>
+    <div class="field">
+      <label>Custo/hora (R$)</label>
+      <input value="85,00">
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn">Cancelar</button>
+    <button class="btn primary">Salvar máquina</button>
+  </div>
+</div>
+
+<!-- 2. MOLDES / TEMPO DE CICLO -->
+<div class="panel">
+  <h2>Molde / Produto — Tempo de Ciclo</h2>
+  <p class="desc">Aqui entra o dado mais sensível do cálculo: quanto tempo cada tiro leva e quantas peças saem por tiro.</p>
+  <div class="grid wide">
+    <div class="field span2">
+      <label>Produto</label>
+      <input value="Pote 250ml Rosca">
+    </div>
+    <div class="field">
+      <label>Código do molde</label>
+      <input value="M-2280">
+    </div>
+    <div class="field">
+      <label>Nº de cavidades</label>
+      <input value="4">
+    </div>
+    <div class="field">
+      <label>Tempo de ciclo (s)</label>
+      <input value="18,5">
+      <span class="hint">segundos por tiro</span>
+    </div>
+    <div class="field">
+      <label>Peças / hora (calculado)</label>
+      <input value="778" disabled style="background:#f0f2f4;color:#8a949e;">
+    </div>
+    <div class="field">
+      <label>Tempo de setup (min)</label>
+      <input value="90">
+      <span class="hint">troca de molde + ajuste</span>
+    </div>
+    <div class="field span2">
+      <label>Máquinas compatíveis</label>
+      <input value="INJ-01, INJ-02, INJ-05">
+      <span class="hint">por tonelagem e dimensão do prato</span>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn">Cancelar</button>
+    <button class="btn primary">Salvar molde</button>
+  </div>
+</div>
+
+<!-- 3. TURNOS -->
+<div class="panel">
+  <h2>Turnos e Calendário — INJ-01</h2>
+  <p class="desc">Define a capacidade disponível real da máquina, descontando paradas programadas.</p>
+  <div class="grid">
+    <div class="field">
+      <label>Turno 1</label>
+      <input value="06:00 – 14:20">
+    </div>
+    <div class="field">
+      <label>Turno 2</label>
+      <input value="14:20 – 22:40">
+    </div>
+    <div class="field">
+      <label>Turno 3</label>
+      <input value="Inativo">
+    </div>
+    <div class="field">
+      <label>Dias de operação</label>
+      <input value="Seg a Sáb">
+    </div>
+    <div class="field">
+      <label>Horas úteis / dia</label>
+      <input value="16,6" disabled style="background:#f0f2f4;color:#8a949e;">
+    </div>
+    <div class="field">
+      <label>Eficiência considerada (%)</label>
+      <input value="88">
+      <span class="hint">desconta micro-paradas, refugo</span>
+    </div>
+    <div class="field span2">
+      <label>Parada programada</label>
+      <input value="Manutenção preventiva — Qua 08:00–12:00">
+    </div>
+    <div class="field">
+      <span class="add-link">+ Adicionar parada</span>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn">Cancelar</button>
+    <button class="btn primary">Salvar calendário</button>
+  </div>
+</div>
+
+<!-- 4. DEMANDA -->
+<div class="panel">
+  <h2>Demanda — Novo Pedido / Ordem</h2>
+  <p class="desc">Quantidade solicitada gera automaticamente as horas necessárias, usando o tempo de ciclo do molde vinculado.</p>
+  <div class="grid wide">
+    <div class="field span2">
+      <label>Produto</label>
+      <select><option>Pote 250ml Rosca (M-2280)</option></select>
+    </div>
+    <div class="field">
+      <label>Quantidade (peças)</label>
+      <input value="42.000">
+    </div>
+    <div class="field">
+      <label>Prazo de entrega</label>
+      <input value="12/09/2026">
+    </div>
+    <div class="field">
+      <label>Cliente / Pedido nº</label>
+      <input value="PC-8834">
+    </div>
+    <div class="field">
+      <label>Prioridade</label>
+      <select><option>Normal</option><option>Alta</option><option>Urgente</option></select>
+    </div>
+    <div class="field">
+      <label>Horas necessárias (calculado)</label>
+      <input value="54h 00min" disabled style="background:#f0f2f4;color:#8a949e;">
+    </div>
+    <div class="field">
+      <label>Máquina sugerida</label>
+      <input value="INJ-05 (menor carga atual)" disabled style="background:#f0f2f4;color:#8a949e;">
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn">Cancelar</button>
+    <button class="btn primary">Adicionar à carga</button>
+  </div>
+
+  <div class="section-title">Pedidos em fila de alocação</div>
+  <table>
+    <tr>
+      <th>Pedido</th><th>Produto</th><th>Qtd.</th><th>Prazo</th><th>Horas nec.</th><th>Status</th>
+    </tr>
+    <tr>
+      <td>PC-8834</td><td>Pote 250ml Rosca</td><td>42.000</td><td>12/09</td><td>54h</td>
+      <td><span class="tag warn">Aguardando alocação</span></td>
+    </tr>
+    <tr>
+      <td>PC-8829</td><td>Tampa 500ml</td><td>18.500</td><td>10/09</td><td>26h</td>
+      <td><span class="tag ok">Alocado — INJ-01</span></td>
+    </tr>
+    <tr>
+      <td>PC-8841</td><td>Balde 10L</td><td>6.200</td><td>09/09</td><td>31h</td>
+      <td><span class="tag compat">Excede capacidade — revisar</span></td>
+    </tr>
+  </table>
+</div>
+
+</body>
+</html>

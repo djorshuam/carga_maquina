@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Carga Máquina — Telas Complementares</title>
+<style>
+  :root{
+    --bg:#f4f6f8;
+    --panel:#ffffff;
+    --border:#e1e5ea;
+    --text:#1c2530;
+    --muted:#68737f;
+    --blue:#2f6fed;
+    --blue-bg:#eaf0fe;
+    --green:#2e9e5b;
+    --green-bg:#e6f6ec;
+    --yellow:#c98a06;
+    --yellow-bg:#fff4dc;
+    --red:#d0402a;
+    --red-bg:#fbe6e2;
+    --orange:#e0692b;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    color:var(--text);
+    padding:24px;
+  }
+  h1{font-size:20px;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 22px;}
+
+  .tabs{
+    display:flex;
+    gap:4px;
+    border-bottom:1px solid var(--border);
+    margin-bottom:20px;
+    flex-wrap:wrap;
+  }
+  .tab{
+    padding:9px 14px;
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--muted);
+    border-bottom:2px solid transparent;
+  }
+  .tab.active{ color:var(--blue); border-bottom:2px solid var(--blue); }
+
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:20px 22px;
+    margin-bottom:22px;
+  }
+  .panel h2{ font-size:15px; margin:0 0 4px; }
+  .panel .desc{ font-size:12.5px; color:var(--muted); margin:0 0 18px; }
+
+  .grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px 16px; }
+  .field{ display:flex; flex-direction:column; gap:5px; }
+  .field.span2{ grid-column:span 2; }
+  .field label{ font-size:11.5px; font-weight:600; color:var(--muted); }
+  .field input, .field select{
+    border:1px solid var(--border); border-radius:7px; padding:8px 10px;
+    font-size:13px; color:var(--text); background:#fbfbfc;
+  }
+  .field input:disabled{ background:#f0f2f4; color:#8a949e; }
+  .field .hint{ font-size:10.5px; color:#9aa4ae; }
+
+  .btn-row{ display:flex; justify-content:flex-end; gap:10px; margin-top:18px; }
+  .btn{ padding:9px 18px; border-radius:7px; font-size:13px; font-weight:600; border:1px solid var(--border); background:#fff; color:var(--text); }
+  .btn.primary{ background:var(--blue); border-color:var(--blue); color:#fff; }
+
+  table{ width:100%; border-collapse:collapse; font-size:12.5px; margin-top:6px; }
+  th{ text-align:left; font-size:11px; color:var(--muted); padding:6px 8px; border-bottom:1px solid var(--border); }
+  td{ padding:8px 8px; border-bottom:1px solid #eef1f4; }
+  tr:last-child td{ border-bottom:none; }
+
+  .tag{ display:inline-block; padding:2px 8px; border-radius:8px; font-size:10.5px; font-weight:600; }
+  .tag.ok{ background:var(--green-bg); color:var(--green); }
+  .tag.warn{ background:var(--yellow-bg); color:var(--yellow); }
+  .tag.bad{ background:var(--red-bg); color:var(--red); }
+  .tag.info{ background:var(--blue-bg); color:var(--blue); }
+
+  .section-title{
+    font-size:12px; font-weight:700; color:var(--text);
+    margin:22px 0 10px; text-transform:uppercase; letter-spacing:.03em;
+  }
+
+  /* OEE cards */
+  .oee-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:8px; }
+  .oee-card{ background:#fbfbfc; border:1px solid var(--border); border-radius:10px; padding:14px 16px; }
+  .oee-card .label{ font-size:11.5px; color:var(--muted); margin-bottom:6px; }
+  .oee-card .value{ font-size:24px; font-weight:700; }
+  .oee-card.total .value{ color:var(--blue); }
+  .bar-bg{ background:#eef1f4; border-radius:6px; height:8px; margin-top:8px; overflow:hidden; }
+  .bar-fill{ height:100%; border-radius:6px; }
+
+  .oee-row{
+    display:grid; grid-template-columns:160px 1fr 60px;
+    align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid #eef1f4; font-size:12.5px;
+  }
+  .oee-row:last-child{ border-bottom:none; }
+  .oee-track{ background:#eef1f4; border-radius:6px; height:10px; overflow:hidden; }
+  .oee-fill{ height:100%; }
+
+  .turno-box{
+    border:1px solid var(--border); border-radius:10px; padding:14px 16px; background:#fbfbfc;
+  }
+  .turno-box h3{ font-size:12.5px; margin:0 0 10px; }
+  .op-count{
+    display:flex; align-items:center; justify-content:space-between; font-size:12.5px; margin-bottom:8px;
+  }
+  .op-count .n{ font-weight:700; font-size:15px; }
+</style>
+</head>
+<body>
+
+<h1>Carga Máquina — Telas Complementares</h1>
+<p class="sub">Matéria-prima/receita · Operadores por turno · Apontamento e OEE</p>
+
+<div class="tabs">
+  <div class="tab">Máquinas</div>
+  <div class="tab">Moldes</div>
+  <div class="tab">Turnos</div>
+  <div class="tab">Demanda</div>
+  <div class="tab active">Matéria-prima / Receita</div>
+  <div class="tab active">Operadores</div>
+  <div class="tab active">Apontamento / OEE</div>
+</div>
+
+<!-- MATÉRIA-PRIMA / RECEITA -->
+<div class="panel">
+  <h2>Receita do Molde — M-2280 (Pote 250ml Rosca)</h2>
+  <p class="desc">Composição de material e parâmetros de processo. Usado para calcular consumo de resina por peça e checar disponibilidade de estoque antes de confirmar a carga.</p>
+
+  <div class="section-title">Composição (receita)</div>
+  <table>
+    <tr><th>Material</th><th>Tipo</th><th>% na mistura</th><th>Peso por peça (g)</th><th>Estoque disponível</th></tr>
+    <tr>
+      <td>PP Homopolímero H103</td><td>Resina virgem</td><td>85%</td><td>10,2 g</td>
+      <td><span class="tag ok">4.800 kg</span></td>
+    </tr>
+    <tr>
+      <td>Regranulado PP interno</td><td>Reciclo de processo</td><td>13%</td><td>1,6 g</td>
+      <td><span class="tag ok">1.200 kg</span></td>
+    </tr>
+    <tr>
+      <td>Masterbatch Azul 5021</td><td>Corante</td><td>2%</td><td>0,24 g</td>
+      <td><span class="tag warn">38 kg — atenção</span></td>
+    </tr>
+  </table>
+
+  <div class="section-title">Parâmetros de processo</div>
+  <div class="grid">
+    <div class="field">
+      <label>Peso total da peça (g)</label>
+      <input value="12,0">
+    </div>
+    <div class="field">
+      <label>Temp. zona alimentação (°C)</label>
+      <input value="180">
+    </div>
+    <div class="field">
+      <label>Temp. zona compressão (°C)</label>
+      <input value="205">
+    </div>
+    <div class="field">
+      <label>Temp. zona dosagem (°C)</label>
+      <input value="215">
+    </div>
+    <div class="field">
+      <label>Temp. do molde (°C)</label>
+      <input value="35">
+    </div>
+    <div class="field">
+      <label>Tempo de aquecimento inicial (min)</label>
+      <input value="35">
+      <span class="hint">até estabilizar as zonas — entra no setup</span>
+    </div>
+    <div class="field">
+      <label>Tempo de resfriamento por tiro (s)</label>
+      <input value="8,5">
+      <span class="hint">já incluso no tempo de ciclo</span>
+    </div>
+    <div class="field">
+      <label>% refugo esperado</label>
+      <input value="3,0">
+      <span class="hint">aumenta tiros necessários</span>
+    </div>
+  </div>
+
+  <div class="section-title">Consumo calculado para o pedido PC-8834 (42.000 peças)</div>
+  <table>
+    <tr><th>Material</th><th>Consumo líquido</th><th>+ Refugo (3%)</th><th>Total necessário</th><th>Situação</th></tr>
+    <tr><td>PP Homopolímero H103</td><td>428,4 kg</td><td>12,9 kg</td><td>441,3 kg</td><td><span class="tag ok">Disponível</span></td></tr>
+    <tr><td>Regranulado PP interno</td><td>67,2 kg</td><td>2,0 kg</td><td>69,2 kg</td><td><span class="tag ok">Disponível</span></td></tr>
+    <tr><td>Masterbatch Azul 5021</td><td>10,1 kg</td><td>0,3 kg</td><td>10,4 kg</td><td><span class="tag bad">Insuficiente — comprar</span></td></tr>
+  </table>
+
+  <div class="btn-row">
+    <button class="btn">Cancelar</button>
+    <button class="btn primary">Salvar receita</button>
+  </div>
+</div>
+
+<!-- OPERADORES POR TURNO -->
+<div class="panel">
+  <h2>Necessidade de Operadores por Turno</h2>
+  <p class="desc">Sem cadastro nominal — apenas quantas pessoas cada máquina exige por turno, para checar se há mão de obra suficiente disponível.</p>
+
+  <div class="grid">
+    <div class="field">
+      <label>Máquina</label>
+      <select><option>INJ-01 · 120t</option></select>
+    </div>
+    <div class="field">
+      <label>Operadores — Turno 1</label>
+      <input value="1">
+    </div>
+    <div class="field">
+      <label>Operadores — Turno 2</label>
+      <input value="1">
+    </div>
+    <div class="field">
+      <label>Operadores — Turno 3</label>
+      <input value="0">
+    </div>
+    <div class="field span2">
+      <label>Observação</label>
+      <input value="1 operador pode atender até 2 injetoras pequenas simultaneamente">
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn">Cancelar</button>
+    <button class="btn primary">Salvar necessidade</button>
+  </div>
+
+  <div class="section-title">Painel de cobertura — hoje</div>
+  <div class="grid" style="grid-template-columns:repeat(3,1fr);">
+    <div class="turno-box">
+      <h3>Turno 1 (06:00–14:20)</h3>
+      <div class="op-count"><span>Necessário</span><span class="n">7</span></div>
+      <div class="op-count"><span>Disponível</span><span class="n">7</span></div>
+      <span class="tag ok">Cobertura completa</span>
+    </div>
+    <div class="turno-box">
+      <h3>Turno 2 (14:20–22:40)</h3>
+      <div class="op-count"><span>Necessário</span><span class="n">6</span></div>
+      <div class="op-count"><span>Disponível</span><span class="n">5</span></div>
+      <span class="tag warn">Falta 1 operador</span>
+    </div>
+    <div class="turno-box">
+      <h3>Turno 3 (22:40–06:00)</h3>
+      <div class="op-count"><span>Necessário</span><span class="n">2</span></div>
+      <div class="op-count"><span>Disponível</span><span class="n">2</span></div>
+      <span class="tag ok">Cobertura completa</span>
+    </div>
+  </div>
+</div>
+
+<!-- APONTAMENTO / OEE -->
+<div class="panel">
+  <h2>Apontamento de Produção</h2>
+  <p class="desc">Registro do que foi realmente produzido no turno — compara com o planejado e alimenta o cálculo de OEE.</p>
+
+  <div class="grid">
+    <div class="field">
+      <label>Máquina</label>
+      <select><option>INJ-02 · 180t</option></select>
+    </div>
+    <div class="field">
+      <label>Turno</label>
+      <select><option>Turno 1 — 06:00–14:20</option></select>
+    </div>
+    <div class="field">
+      <label>Ordem de produção</label>
+      <input value="OP 4790">
+    </div>
+    <div class="field">
+      <label>Peças produzidas</label>
+      <input value="3.180">
+    </div>
+    <div class="field">
+      <label>Peças refugadas</label>
+      <input value="94">
+    </div>
+    <div class="field">
+      <label>Tempo parado (min)</label>
+      <input value="42">
+    </div>
+    <div class="field span2">
+      <label>Motivo da parada</label>
+      <select><option>Troca de molde</option><option>Falta de material</option><option>Manutenção corretiva</option><option>Ajuste de processo</option><option>Falta de operador</option></select>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn">Cancelar</button>
+    <button class="btn primary">Registrar apontamento</button>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>OEE — INJ-02 · Turno 1 · Hoje</h2>
+  <p class="desc">Disponibilidade × Performance × Qualidade — calculado automaticamente a partir dos apontamentos.</p>
+
+  <div class="oee-grid">
+    <div class="oee-card">
+      <div class="label">Disponibilidade</div>
+      <div class="value" style="color:var(--blue)">92%</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:92%; background:var(--blue);"></div></div>
+    </div>
+    <div class="oee-card">
+      <div class="label">Performance</div>
+      <div class="value" style="color:var(--orange)">88%</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:88%; background:var(--orange);"></div></div>
+    </div>
+    <div class="oee-card">
+      <div class="label">Qualidade</div>
+      <div class="value" style="color:var(--green)">97%</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:97%; background:var(--green);"></div></div>
+    </div>
+    <div class="oee-card total">
+      <div class="label">OEE Total</div>
+      <div class="value">78%</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:78%; background:var(--blue);"></div></div>
+    </div>
+  </div>
+
+  <div class="section-title">OEE por máquina — últimos 7 dias</div>
+  <div class="oee-row">
+    <span>INJ-01</span>
+    <div class="oee-track"><div class="oee-fill" style="width:85%; background:var(--green);"></div></div>
+    <span><strong>85%</strong></span>
+  </div>
+  <div class="oee-row">
+    <span>INJ-02</span>
+    <div class="oee-track"><div class="oee-fill" style="width:78%; background:var(--blue);"></div></div>
+    <span><strong>78%</strong></span>
+  </div>
+  <div class="oee-row">
+    <span>INJ-03</span>
+    <div class="oee-track"><div class="oee-fill" style="width:91%; background:var(--green);"></div></div>
+    <span><strong>91%</strong></span>
+  </div>
+  <div class="oee-row">
+    <span>INJ-04</span>
+    <div class="oee-track"><div class="oee-fill" style="width:64%; background:var(--yellow);"></div></div>
+    <span><strong>64%</strong></span>
+  </div>
+  <div class="oee-row">
+    <span>INJ-05</span>
+    <div class="oee-track"><div class="oee-fill" style="width:58%; background:var(--red);"></div></div>
+    <span><strong>58%</strong></span>
+  </div>
+  <div class="oee-row">
+    <span>INJ-06</span>
+    <div class="oee-track"><div class="oee-fill" style="width:88%; background:var(--green);"></div></div>
+    <span><strong>88%</strong></span>
+  </div>
+
+  <div class="section-title">Principais perdas do período</div>
+  <table>
+    <tr><th>Motivo</th><th>Ocorrências</th><th>Tempo total</th><th>% do parado</th></tr>
+    <tr><td>Troca de molde / setup</td><td>18</td><td>27h 30min</td><td>41%</td></tr>
+    <tr><td>Falta de material</td><td>6</td><td>9h 10min</td><td>14%</td></tr>
+    <tr><td>Manutenção corretiva</td><td>4</td><td>14h 45min</td><td>22%</td></tr>
+    <tr><td>Ajuste de processo</td><td>11</td><td>8h 05min</td><td>12%</td></tr>
+    <tr><td>Falta de operador</td><td>3</td><td>7h 20min</td><td>11%</td></tr>
+  </table>
+</div>
+
+</body>
+</html>

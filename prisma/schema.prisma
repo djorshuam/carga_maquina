@@ -1,0 +1,189 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum StatusMaquina {
+  ATIVA
+  MANUTENCAO
+  INATIVA
+}
+
+enum TipoMaterial {
+  RESINA_VIRGEM
+  RECICLO
+  MASTERBATCH
+  OUTRO
+}
+
+enum Prioridade {
+  NORMAL
+  ALTA
+  URGENTE
+}
+
+enum MotivoParada {
+  SETUP
+  FALTA_MATERIAL
+  MANUTENCAO_CORRETIVA
+  AJUSTE_PROCESSO
+  FALTA_OPERADOR
+  OUTRO
+}
+
+model Maquina {
+  id                 String        @id @default(cuid())
+  codigo             String        @unique
+  tonelagem          Int
+  fabricanteModelo   String        @default("")
+  dimensaoPratoMm    Int           @default(0)
+  cursoAberturaMm    Int           @default(0)
+  capacidadeInjecaoG Int           @default(0)
+  custoHora          Decimal       @default(0) @db.Decimal(12, 2)
+  status             StatusMaquina @default(ATIVA)
+
+  // Turnos / calendário (RN-05)
+  turno1Inicio        String? // "06:00"
+  turno1Fim           String?
+  turno2Inicio        String?
+  turno2Fim           String?
+  turno3Inicio        String?
+  turno3Fim           String?
+  diasOperacao        Int     @default(5) // dias por semana
+  eficienciaPercentual Int    @default(85)
+
+  // Necessidade de operadores (F-005)
+  operadoresTurno1 Int @default(1)
+  operadoresTurno2 Int @default(1)
+  operadoresTurno3 Int @default(0)
+  operadoresObs    String @default("")
+
+  paradas      ParadaProgramada[]
+  moldes       Molde[]            @relation("MoldeMaquinas")
+  pedidos      Pedido[]
+  apontamentos Apontamento[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ParadaProgramada {
+  id        String   @id @default(cuid())
+  maquinaId String
+  maquina   Maquina  @relation(fields: [maquinaId], references: [id], onDelete: Cascade)
+  motivo    String
+  inicio    DateTime
+  fim       DateTime
+}
+
+model Molde {
+  id             String    @id @default(cuid())
+  codigo         String    @unique
+  produto        String
+  numeroCavidades Int
+  tempoCicloS    Decimal   @db.Decimal(8, 2)
+  tempoSetupMin  Int       @default(0)
+  maquinas       Maquina[] @relation("MoldeMaquinas")
+  receita        Receita?
+  pedidos        Pedido[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Receita {
+  id                        String  @id @default(cuid())
+  moldeId                   String  @unique
+  molde                     Molde   @relation(fields: [moldeId], references: [id], onDelete: Cascade)
+  pesoPecaG                 Decimal @db.Decimal(10, 3)
+  percentualRefugoEsperado  Decimal @default(3) @db.Decimal(5, 2)
+  tempAlimentacao           Int?
+  tempCompressao            Int?
+  tempDosagem               Int?
+  tempMolde                 Int?
+  tempoAquecimentoInicialMin Int    @default(0)
+  tempoResfriamentoS        Decimal? @db.Decimal(8, 2)
+  composicao                ComposicaoItem[]
+}
+
+model ComposicaoItem {
+  id           String   @id @default(cuid())
+  receitaId    String
+  receita      Receita  @relation(fields: [receitaId], references: [id], onDelete: Cascade)
+  materialId   String
+  material     Material @relation(fields: [materialId], references: [id])
+  percentual   Decimal  @db.Decimal(5, 2)
+  pesoPorPecaG Decimal  @db.Decimal(10, 3)
+}
+
+model Material {
+  id                 String           @id @default(cuid())
+  nome               String           @unique
+  tipo               TipoMaterial     @default(RESINA_VIRGEM)
+  estoqueDisponivelKg Decimal?        @db.Decimal(12, 2) // null = não verificado
+  composicoes        ComposicaoItem[]
+}
+
+model Pedido {
+  id              String     @id @default(cuid())
+  numero          String     @unique
+  cliente         String     @default("")
+  moldeId         String
+  molde           Molde      @relation(fields: [moldeId], references: [id])
+  quantidadePecas Int
+  prazoEntrega    DateTime
+  prioridade      Prioridade @default(NORMAL)
+  maquinaId       String?
+  maquina         Maquina?   @relation(fields: [maquinaId], references: [id])
+  inicioPlanejado DateTime?
+  apontamentos    Apontamento[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Apontamento {
+  id             String       @id @default(cuid())
+  maquinaId      String
+  maquina        Maquina      @relation(fields: [maquinaId], references: [id])
+  pedidoId       String
+  pedido         Pedido       @relation(fields: [pedidoId], references: [id])
+  data           DateTime     @db.Date
+  turno          Int // 1, 2, 3
+  pecasProduzidas Int
+  pecasRefugadas Int
+  tempoParadoMin Int          @default(0)
+  motivoParada   MotivoParada?
+  observacao     String       @default("")
+  confirmado     Boolean      @default(true)
+  auditoria      ApontamentoAuditoria[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([maquinaId, pedidoId, data, turno])
+}
+
+model ApontamentoAuditoria {
+  id            String      @id @default(cuid())
+  apontamentoId String
+  apontamento   Apontamento @relation(fields: [apontamentoId], references: [id], onDelete: Cascade)
+  alteradoPor   String
+  valorAnterior Json
+  createdAt     DateTime    @default(now())
+}
+
+// Operadores disponíveis por turno (input manual, F-005)
+model DisponibilidadeOperadores {
+  id     String   @id @default(cuid())
+  data   DateTime @db.Date
+  turno  Int
+  quantidade Int
+
+  @@unique([data, turno])
+}

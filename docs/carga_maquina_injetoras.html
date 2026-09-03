@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Carga Máquina — Injetoras</title>
+<style>
+  :root{
+    --bg:#f4f6f8;
+    --panel:#ffffff;
+    --border:#e1e5ea;
+    --text:#1c2530;
+    --muted:#68737f;
+    --green:#2e9e5b;
+    --green-bg:#e6f6ec;
+    --yellow:#c98a06;
+    --yellow-bg:#fff4dc;
+    --red:#d0402a;
+    --red-bg:#fbe6e2;
+    --blue:#2f6fed;
+    --setup:#c7cdd6;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    color:var(--text);
+    padding:24px;
+  }
+  h1{
+    font-size:20px;
+    margin:0 0 4px;
+  }
+  .sub{
+    color:var(--muted);
+    font-size:13px;
+    margin:0 0 20px;
+  }
+  .summary{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    margin-bottom:22px;
+  }
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:14px 16px;
+  }
+  .card .label{
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:6px;
+  }
+  .card .value{
+    font-size:22px;
+    font-weight:600;
+  }
+  .card .value.red{color:var(--red);}
+  .card .value.yellow{color:var(--yellow);}
+  .card .value.green{color:var(--green);}
+
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:18px;
+    margin-bottom:20px;
+    overflow-x:auto;
+  }
+  .panel h2{
+    font-size:15px;
+    margin:0 0 14px;
+  }
+
+  .legend{
+    display:flex;
+    gap:16px;
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:16px;
+    flex-wrap:wrap;
+  }
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .swatch{width:10px;height:10px;border-radius:2px;display:inline-block;}
+
+  .gantt{
+    min-width:920px;
+  }
+  .gantt-header{
+    display:grid;
+    grid-template-columns:170px repeat(7,1fr);
+    font-size:11px;
+    color:var(--muted);
+    border-bottom:1px solid var(--border);
+    padding-bottom:6px;
+    margin-bottom:6px;
+  }
+  .gantt-header div{text-align:center;}
+  .gantt-header div:first-child{text-align:left;}
+
+  .row{
+    display:grid;
+    grid-template-columns:170px repeat(7,1fr);
+    align-items:center;
+    border-bottom:1px solid #eef1f4;
+    padding:9px 0;
+  }
+  .row:last-child{border-bottom:none;}
+  .machine-info{
+    padding-right:8px;
+  }
+  .machine-name{
+    font-weight:600;
+    font-size:13px;
+  }
+  .machine-meta{
+    font-size:11px;
+    color:var(--muted);
+    margin-top:2px;
+  }
+  .occ{
+    display:inline-block;
+    margin-top:4px;
+    font-size:10.5px;
+    font-weight:600;
+    padding:1px 6px;
+    border-radius:8px;
+  }
+  .occ.red{background:var(--red-bg);color:var(--red);}
+  .occ.yellow{background:var(--yellow-bg);color:var(--yellow);}
+  .occ.green{background:var(--green-bg);color:var(--green);}
+
+  .track{
+    grid-column:2 / span 7;
+    position:relative;
+    height:34px;
+    background:repeating-linear-gradient(to right,#f7f8fa 0,#f7f8fa calc(100%/7 - 1px),#eef1f4 calc(100%/7 - 1px),#eef1f4 calc(100%/7));
+    border-radius:6px;
+  }
+  .block{
+    position:absolute;
+    top:4px;
+    height:26px;
+    border-radius:5px;
+    font-size:10.5px;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    padding:0 8px;
+    overflow:hidden;
+    white-space:nowrap;
+    cursor:default;
+  }
+  .block.op{background:var(--blue);}
+  .block.setup{background:var(--setup);color:#4b545e;font-style:italic;}
+  .block.overload{background:var(--red);}
+
+  .row-track-wrapper{
+    display:contents;
+  }
+
+  footer{
+    font-size:11.5px;
+    color:var(--muted);
+    text-align:center;
+    margin-top:10px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Carga Máquina — Injetoras</h1>
+<p class="sub">Semana de 07 a 13 de setembro · Planejamento de Produção · Injeção de Plástico</p>
+
+<div class="summary">
+  <div class="card">
+    <div class="label">Máquinas monitoradas</div>
+    <div class="value">6</div>
+  </div>
+  <div class="card">
+    <div class="label">Ocupação média</div>
+    <div class="value yellow">84%</div>
+  </div>
+  <div class="card">
+    <div class="label">Máquinas sobrecarregadas</div>
+    <div class="value red">2</div>
+  </div>
+  <div class="card">
+    <div class="label">Ordens não alocadas</div>
+    <div class="value red">3</div>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Carga por máquina — visão semanal</h2>
+  <div class="legend">
+    <span><span class="swatch" style="background:var(--blue)"></span> Ordem de produção</span>
+    <span><span class="swatch" style="background:var(--setup)"></span> Setup / troca de molde</span>
+    <span><span class="swatch" style="background:var(--red)"></span> Excedente (acima da capacidade)</span>
+  </div>
+
+  <div class="gantt">
+    <div class="gantt-header">
+      <div>Máquina</div>
+      <div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div><div>Dom</div>
+    </div>
+
+    <div class="row">
+      <div class="machine-info">
+        <div class="machine-name">INJ-01 · 120t</div>
+        <div class="machine-meta">2 turnos · molde M-2210</div>
+        <span class="occ green">72% ocupada</span>
+      </div>
+      <div class="track">
+        <div class="block op" style="left:2%; width:40%;">OP 4821 — Tampa 500ml</div>
+        <div class="block setup" style="left:43%; width:6%;">Setup</div>
+        <div class="block op" style="left:50%; width:30%;">OP 4830 — Tampa 500ml</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="machine-info">
+        <div class="machine-name">INJ-02 · 180t</div>
+        <div class="machine-meta">3 turnos · molde M-3105</div>
+        <span class="occ red">108% ocupada</span>
+      </div>
+      <div class="track">
+        <div class="block op" style="left:0%; width:60%;">OP 4790 — Balde 10L</div>
+        <div class="block overload" style="left:60%; width:14%;">Excedente</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="machine-info">
+        <div class="machine-name">INJ-03 · 90t</div>
+        <div class="machine-meta">1 turno · molde M-1187</div>
+        <span class="occ green">45% ocupada</span>
+      </div>
+      <div class="track">
+        <div class="block op" style="left:5%; width:22%;">OP 4855 — Conector</div>
+        <div class="block setup" style="left:27%; width:5%;">Setup</div>
+        <div class="block op" style="left:32%; width:16%;">OP 4860 — Conector</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="machine-info">
+        <div class="machine-name">INJ-04 · 250t</div>
+        <div class="machine-meta">3 turnos · molde M-4050</div>
+        <span class="occ yellow">93% ocupada</span>
+      </div>
+      <div class="track">
+        <div class="block op" style="left:0%; width:70%;">OP 4770 — Cadeira base</div>
+        <div class="block setup" style="left:70%; width:5%;">Setup</div>
+        <div class="block op" style="left:75%; width:18%;">OP 4802 — Cadeira base</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="machine-info">
+        <div class="machine-name">INJ-05 · 120t</div>
+        <div class="machine-meta">2 turnos · molde M-2280</div>
+        <span class="occ red">115% ocupada</span>
+      </div>
+      <div class="track">
+        <div class="block op" style="left:0%; width:65%;">OP 4901 — Pote 250ml</div>
+        <div class="block overload" style="left:65%; width:18%;">Excedente</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="machine-info">
+        <div class="machine-name">INJ-06 · 60t</div>
+        <div class="machine-meta">1 turno · manutenção qua/qui</div>
+        <span class="occ green">30% ocupada</span>
+      </div>
+      <div class="track">
+        <div class="block op" style="left:2%; width:20%;">OP 4915 — Clipe</div>
+        <div class="block setup" style="left:40%; width:5%; background:#e3a8a8; color:#7a2323;">Manut.</div>
+        <div class="block op" style="left:55%; width:15%;">OP 4920 — Clipe</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>Mockup ilustrativo — dados fictícios, apenas para visualização do layout.</footer>
+
+</body>
+</html>
