@@ -1,21 +1,26 @@
 @import "tailwindcss";
 
-/* Tokens derivados dos mockups em docs/ (ver DESIGN.md) */
+/* Tokens da marca JTECH (github.com/djorshuam/jtech-portfolio) — ver DESIGN.md.
+   Verde/amarelo/vermelho ficam fora do rebrand: são semáforo funcional
+   (sobrecarga, OEE, estoque) e mudar o significado desses tons quebraria a leitura da tela. */
 :root {
-  --bg: #f4f6f8;
+  --bg: #f6f9fc;
   --panel: #ffffff;
-  --border: #e1e5ea;
-  --text: #1c2530;
-  --muted: #68737f;
+  --border: #e3e8ee;
+  --text: #0d253d;
+  --muted: #64748d;
   --green: #2e9e5b;
   --green-bg: #e6f6ec;
   --yellow: #c98a06;
   --yellow-bg: #fff4dc;
   --red: #d0402a;
   --red-bg: #fbe6e2;
-  --blue: #2f6fed;
-  --blue-bg: #e8effd;
-  --setup: #c7cdd6;
+  --blue: #533afd;
+  --blue-deep: #4434d4;
+  --blue-bg: #efecff;
+  --setup: #c9c3ea;
+  --shadow-1: 0 1px 3px rgba(13, 37, 61, 0.07);
+  --shadow-2: 0 8px 20px rgba(13, 37, 61, 0.09), 0 2px 6px rgba(13, 37, 61, 0.05);
 }
 
 @theme inline {
@@ -43,15 +48,16 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   font-size: 14px;
 }
 
 .panel {
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 18px;
+  box-shadow: var(--shadow-1);
 }
 
 .panel h2 {
@@ -102,7 +108,7 @@ body {
 
 .input:focus {
   border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(47, 111, 237, 0.15);
+  box-shadow: 0 0 0 3px rgba(83, 58, 253, 0.15);
 }
 
 .input[readonly] {
@@ -126,7 +132,7 @@ body {
 }
 
 .btn:hover {
-  background: #f4f6f8;
+  background: var(--bg);
 }
 
 .btn.primary {
@@ -136,7 +142,8 @@ body {
 }
 
 .btn.primary:hover {
-  background: #2559c9;
+  background: var(--blue-deep);
+  border-color: var(--blue-deep);
 }
 
 .btn.danger {
@@ -160,7 +167,7 @@ body {
 .tag.ok { background: var(--green-bg); color: var(--green); }
 .tag.warn { background: var(--yellow-bg); color: var(--yellow); }
 .tag.bad { background: var(--red-bg); color: var(--red); }
-.tag.info { background: var(--blue-bg); color: var(--blue); }
+.tag.info { background: var(--blue-bg); color: var(--blue-deep); }
 .tag.neutral { background: #eef1f4; color: var(--muted); }
 
 table.tbl {
@@ -191,14 +198,15 @@ table.tbl tr:last-child td {
 }
 
 table.tbl tr:hover td {
-  background: #fafbfc;
+  background: var(--bg);
 }
 
 .card {
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 14px 16px;
+  box-shadow: var(--shadow-1);
 }
 
 .card .label {
@@ -224,11 +232,11 @@ table.tbl tr:hover td {
 }
 
 .nav-link:hover {
-  background: #eef1f4;
+  background: var(--bg);
 }
 
 .nav-link.active {
   background: var(--blue-bg);
-  color: var(--blue);
+  color: var(--blue-deep);
   font-weight: 600;
 }
